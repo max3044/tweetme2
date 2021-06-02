@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+
+
+
+
+<!-- this is the way how we can include base blocks -->
+
+
+{% block title %}
+
+
+Amazing clone of twitter
+
+
+{% endblock title %}
+
+{% block content %}
+
+Welcome to Tweetme2
+
+
+<div id="tweets">
+
+    Loading...
+
+</div>
+
+
+
+<!-- for js using script tag -->
+<script>
+
+
+    // // document.getElementById(айди) - метод получения объекта по html id
+    // // фактически получает объект
+    const tweetsElement = document.getElementById("tweets") // get an html el
+    // tweetsElement.innerHTML = "Loading..." // set new html in that el
+
+
+    // // объявляем переменные
+    // var el1 = "<h1> Hi there 1 </h1>"
+    // var el2 = "<h1> Hi there 2 </h1>"
+    // var el3 = "<h1> Hi there 3 </h1>"
+
+    // // присваиваем полю (на самом деле это property) innerHTML у объекта tweetsElement эти переменные
+    // // точно также, как мы бы сделали в питоне
+    // // x = SomeClass()
+    // // a = 1
+    // // b = 2
+    // // c = 3
+    // // x.innerHTML = a + b + c
+    // tweetsElement.innerHTML = el1 + el2+ el3
+
+
+    const xhr = new XMLHttpRequest() // xhr = SomeClass()
+    const method = "GET" 
+
+    // страница REST API, на которую возвращается JsonResponse
+    // в urls для этой страницы мы прописали функцию, возвращаюшую JsonResponse 
+    // JsonResponse будет доступен (как аттрибут response) после вызова метода .open() на объекте класса xhr
+
+    const url = "/tweets" 
+    const responseType = "json" // type of data in response
+
+
+  
+    // перед получением response мы должны указать его тип (прописали ранее в константе responseType)
+    xhr.responseType = responseType
+
+    // после вызова этого метода, мы получим доступ к .response
+    xhr.open(method, url)
+
+    // .onload определяет поведение при загрузке страницы (необходимо передать функцию)
+    xhr.onload = function() {
+        console.log(xhr.response)
+        
+        // в эту переменную мы как раз кладём JsonResponse который вернула нам функция из view
+        const serverResponse = xhr.response
+
+        const listedItems = serverResponse.tweets_list // получаем ключ tweets_list из нашего json - он был списком в питоне, в js это просто array
+        
+        
+        var finalTweetStr = ""
+        var i;
+
+
+        for (i = 0; i < listedItems.length; i++)
+        
+        {
+            console.log(i)
+            console.log(listedItems[i])
+            var currentItem = "<div class='mb-4'><h1>" + listedItems[i].id + "</h1>" + "<p>" + listedItems[i].content + "</p></div>"
+
+            finalTweetStr += currentItem
+       
+        }
+        tweetsElement.innerHTML = finalTweetStr
+
+        // console.log(listedItems)
+    }
+
+    // send() тригерит
+    xhr.send()
+
+</script>
+
+
+{% endblock content %}
+
